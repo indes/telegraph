@@ -4,6 +4,7 @@ package telegraph
 import (
 	gojson "encoding/json"
 	"errors"
+	"github.com/valyala/fasthttp/fasthttpproxy"
 
 	json "github.com/json-iterator/go"
 	http "github.com/valyala/fasthttp"
@@ -22,6 +23,10 @@ type Response struct {
 
 var parser = json.ConfigFastest //nolint:gochecknoglobals
 
+var (
+	socks string = ""
+)
+
 func makeRequest(path string, args *http.Args) ([]byte, error) {
 	u := http.AcquireURI()
 	defer http.ReleaseURI(u)
@@ -31,15 +36,26 @@ func makeRequest(path string, args *http.Args) ([]byte, error) {
 	args.CopyTo(u.QueryArgs())
 
 	req := http.AcquireRequest()
+
 	defer http.ReleaseRequest(req)
 	req.Header.SetMethod(http.MethodGet)
 	req.SetRequestURIBytes(u.FullURI())
-	req.Header.SetUserAgent("toby3d/telegraph")
+	req.Header.SetUserAgent("telegraph")
 	req.Header.SetContentType("application/json; charset=utf-8")
 
 	resp := http.AcquireResponse()
 	defer http.ReleaseResponse(resp)
-	if err := http.Do(req, resp); err != nil {
+
+	var client http.Client
+	if (socks != "") {
+		client = http.Client{
+			Dial: fasthttpproxy.FasthttpSocksDialer(socks),
+		}
+	} else {
+		client = http.Client{}
+	}
+
+	if err := client.Do(req, resp); err != nil {
 		return nil, err
 	}
 
