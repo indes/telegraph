@@ -1,9 +1,9 @@
 package telegraph_test
 
 import (
+	"github.com/indes/telegraph"
 	"log"
 
-	"gitlab.com/toby3d/telegraph"
 )
 
 // Content in a string format (for this example).
@@ -35,6 +35,7 @@ func errCheck(err error) {
 
 func Example_fastStart() {
 	var err error
+
 	// Create new Telegraph account.
 	requisites := telegraph.Account{
 		ShortName: "toby3d", // required
@@ -43,6 +44,7 @@ func Example_fastStart() {
 		AuthorName: "Maxim Lebedev",       // optional
 		AuthorURL:  "https://t.me/toby3d", // optional
 	}
+
 	account, err = telegraph.CreateAccount(requisites)
 	errCheck(err)
 

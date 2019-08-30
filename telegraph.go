@@ -24,7 +24,7 @@ type Response struct {
 var parser = json.ConfigFastest //nolint:gochecknoglobals
 
 var (
-	socks string = ""
+	Socks string = ""
 )
 
 func makeRequest(path string, args *http.Args) ([]byte, error) {
@@ -47,9 +47,9 @@ func makeRequest(path string, args *http.Args) ([]byte, error) {
 	defer http.ReleaseResponse(resp)
 
 	var client http.Client
-	if (socks != "") {
+	if (Socks != "") {
 		client = http.Client{
-			Dial: fasthttpproxy.FasthttpSocksDialer(socks),
+			Dial: fasthttpproxy.FasthttpSocksDialer(Socks),
 		}
 	} else {
 		client = http.Client{}
